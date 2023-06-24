@@ -6,7 +6,7 @@
 # @Email: sauravkumarbehera@gmail.com
 # @Create At: 2023-06-24 21:28:47
 # @Last Modified By: imSauravB
-# @Last Modified At: 2023-06-25 00:40:35
+# @Last Modified At: 2023-06-25 02:19:07
 # @Description: This is description.
 
 import sys, os
@@ -44,6 +44,7 @@ parser.add_argument('-t', '--target', help='replace this face', dest='target_pat
 parser.add_argument('-o', '--output', help='save output to this file', dest='output_file')
 parser.add_argument('--gpu', help='use gpu', dest='gpu', action='store_true', default=False)
 parser.add_argument('--keep-fps', help='maintain original fps', dest='keep_fps', action='store_true', default=False)
+parser.add_argument('--keep-frames', help='keep frames directory', dest='keep_frames', action='store_true', default=False)
 
 for name, value in vars(parser.parse_args()).items():
     args[name] = value
@@ -63,16 +64,16 @@ def checkDependencies():
 def startVideoProcessing():
     start_time = time.time()
     if args['gpu']:
-        print("GPU Option is selected!")
+        print("### Going to run on GPU! ###")
         processTargetVideo(args['source_img'], args["frame_paths"])
         end_time = time.time()
         print(flush=True)
         print(f"Processing time: {end_time - start_time:.2f} seconds", flush=True)
     else:
-        print("Going to run on CPU only!")
+        print("@@@ Going to run on CPU only! @@@")
         global pool
-        numberOfCPUCores = psutil.cpu_count() - 2
-        pool = MP.Pool( numberOfCPUCores ) # Run the code in maxcpucore - 2
+        numberOfCPUCores = psutil.cpu_count(logical=False) - 3
+        pool = MP.Pool( numberOfCPUCores ) # Run the code in maxcpucore - 3
         frame_paths = args["frame_paths"]
         n = len(frame_paths)//(numberOfCPUCores)
         processes = []
@@ -104,6 +105,7 @@ def startMain():
             print("\n[WARNING] No face detected in source image. Please try with another one.\n")
             return
         
+        target_path = args['target_path']
         videoNameFull = target_path.split("/")[-1]
         videoName = os.path.splitext(videoNameFull)[0]
         output_dir = os.path.dirname(target_path) + "/" + videoName
@@ -111,7 +113,7 @@ def startMain():
         
         print("Going to detect Video FPS!")
         fps, exact_fps = detect_fps(target_path)
-        print("### GOT FPS: " + str(fps) + ", " + str(exact_fps) + " ###")
+        print("#### GOT FPS: " + str(fps) + ", " + str(exact_fps) + " #####")
         if not args['keep_fps'] and fps > 30:
             this_path = output_dir + "/" + videoName + ".mp4"
             set_fps(target_path, this_path, 30)
@@ -122,13 +124,13 @@ def startMain():
         print("Going to extract the video frames!")
         extract_frames(target_path, output_dir)
         args['frame_paths'] = tuple(sorted(
-            glob.glob(output_dir + "/*.jpeg"),
-            key=lambda x: int(x.split(sep)[-1].replace(".jpeg", ""))
+            glob.glob(output_dir + "/*.png"),
+            key=lambda x: int(x.split(separator)[-1].replace(".png", ""))
         ))
 
         print("Face swaping in progress!")
         startVideoProcessing()
-        print("Swaping Done, now creating Video!")
+        print("Swaping Done, now creating Video!!!!")
         create_video(videoName, exact_fps, output_dir)
         print("Video creation done, now adding audio to the video file!")
         add_audio(output_dir, target_path, videoNameFull, args['keep_frames'], args['output_file'])
@@ -136,7 +138,7 @@ def startMain():
         print("\nVideo saved as:", save_path, "\n")
         print("Face swap successful!")
     except Exception as e:
-        print("Exception Occured!: " + str(e))
+        print("Exception Occured in startMain!: " + str(e))
 
 if __name__ == "__main__":
     checkDependencies()

@@ -6,12 +6,14 @@
 # @Email: sauravkumarbehera@gmail.com
 # @Create At: 2023-06-24 21:49:14
 # @Last Modified By: imSauravB
-# @Last Modified At: 2023-06-24 22:48:34
+# @Last Modified At: 2023-06-25 01:32:09
 # @Description: This is description.
 
 
 import insightface
 import pyCore.config
+
+FACE_ANALYSER = None
 
 def getInsightFaceAnalyser():
     """
@@ -36,7 +38,7 @@ def getSourceFace(imgFrame):
         sourceFace = sorted(faces, key=lambda x: x.bbox[0])[0]
         return sourceFace
     except Exception as e:
-        print("Exception Occured!: " + str(e))
+        print("Exception Occured in getSourceFace!: " + str(e))
         return None
 
 def getAllFaces(imgFrame):
@@ -48,5 +50,5 @@ def getAllFaces(imgFrame):
     try:
          return getInsightFaceAnalyser().get(imgFrame)
     except Exception as e:
-        print("Exception Occured!: " + str(e))
+        print("Exception Occured in getAllFaces!: " + str(e))
         return None

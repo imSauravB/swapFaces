@@ -6,7 +6,7 @@
 # @Email: sauravkumarbehera@gmail.com
 # @Create At: 2023-06-24 21:58:48
 # @Last Modified By: imSauravB
-# @Last Modified At: 2023-06-24 23:26:00
+# @Last Modified At: 2023-06-25 02:16:07
 # @Description: This is description.
 
 import os
@@ -33,7 +33,7 @@ def getInsightFaceSwapper():
 
 def swapFace(sourceFace, faceToBeSwaped, imageFrame):
     if faceToBeSwaped:
-        processedFrame = getInsightFaceSwapper().get(imageFrame, faceToBeSwaped, sourceFace, pasteBack=True)
+        processedFrame = getInsightFaceSwapper().get(imageFrame, faceToBeSwaped, sourceFace, paste_back=True)
         return processedFrame
     else:
         return imageFrame
@@ -54,6 +54,7 @@ def processOneVideoFrame(sourceFace, videoFrame):
 
 def processFramesBatch(sourceFaceImagePath, framesBatchPath):
     try:
+        print ("**** Start Of processFramesBatch ***** ")
         sourceFaceImage = cv2.imread(sourceFaceImagePath)
         sourceFace = getSourceFace(sourceFaceImage)
         for eachFramePath in framesBatchPath:
@@ -62,27 +63,27 @@ def processFramesBatch(sourceFaceImagePath, framesBatchPath):
             if faceFound:
                 cv2.imwrite(eachFramePath, processedFrame)
     except Exception as e:
-        print("Exception Occured!: " + str(e))
+        print("Exception Occured in processFramesBatch!: " + str(e))
 
 def processTargetVideo(sourceFaceImagePath, totalVideoFramesPath):
     try:
-        totalThreads = []
+        threads = []
         numOfThread = pyCore.config.GPU_THREADS
         framesPerBatch = len(totalVideoFramesPath) // numOfThread
         leftOverFramesBatch = len(totalVideoFramesPath) % numOfThread
         startIndex = 0
-        for i in range(numOfThread):
+        for _ in range(numOfThread):
             endIndex = startIndex + framesPerBatch
             if leftOverFramesBatch > 0:
                 endIndex += 1
                 leftOverFramesBatch -= 1
             framesBatchPath = totalVideoFramesPath[startIndex:endIndex]
             thread = threading.Thread( target=processFramesBatch, args=(sourceFaceImagePath, framesBatchPath) )
-            totalThreads.append(thread)
+            threads.append(thread)
             thread.start()
             startIndex = endIndex
-
-        for eachthread in numOfThread:
-            eachthread.join()
+        # threads join
+        for thread in threads:
+            thread.join()
     except Exception as e:
-        print("Exception Occured!: " + str(e))
+        print("Exception Occured in processTargetVideo!: " + str(e))
