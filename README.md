@@ -10,7 +10,7 @@ Install the following dependencies:
 pip install -r requirements.txt
 
 ## CLI Commands
-python swapFacesMain.py
+python swapFacesMain.py (Use this to do swaping on multiple videos in a directory)
 
 python swapFacesMain.py --[options]
 
