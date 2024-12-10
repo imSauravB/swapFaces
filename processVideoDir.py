@@ -16,12 +16,14 @@ import time
 from os import listdir
 from os.path import isfile, join
 
-sourcePath = "C:/Users/saurav/sourceVideos/"
-sourceImage = "C:/Users/saurav/sourceImage.jpg"
-destPath = "C:/Users/saurav/destination/"
-procressedFilesPath = "C:/Users/saurav/done/"
+sourcePath = "/Users/saurav/Pictures/vids/sourceVideos/"
+sourceImage = "/Users/saurav/Pictures/vids/source/6.3.jpg"
+destPath = "/Users/saurav/Pictures/vids/destination/"
+procressedFilesPath = "/Users/saurav/Pictures/vids/done/"
 
 onlyfiles = [f for f in listdir(sourcePath) if isfile(join(sourcePath, f))]
+
+startTime = int( time.time() )
 
 if not onlyfiles:
     print("No Videos Found in the given directory!")
@@ -31,12 +33,16 @@ for sourceFileName in onlyfiles:
     print (sourceFilePath)
     currentEpoch = str ( int( time.time() ) )
     destFilePath = os.path.join( destPath, currentEpoch + ".mp4" )
+    #destFilePath = os.path.join( destPath, sourceFileName )
     print (destFilePath)
-    print ( "python swapFacesMain.py --gpu --keep-fps -f " + sourceImage + " -t " + sourceFilePath + " -o " + destFilePath )
-    os.system ( "python swapFacesMain.py --gpu --keep-fps -f " + sourceImage + " -t " + sourceFilePath + " -o " + destFilePath )
+    print ( "/usr/bin/python3 swapFacesMain.py --keep-fps -f " + sourceImage + " -t " + sourceFilePath + " -o " + destFilePath )
+    os.system ( "/usr/bin/python3 swapFacesMain.py --keep-fps -f " + sourceImage + " -t " + sourceFilePath + " -o " + destFilePath )
     time.sleep(5)
     procressedFilesPathName = os.path.join( procressedFilesPath, sourceFileName )
-    sourceFilePathWindows = sourceFilePath.replace("/", "\\" )
-    procressedFilesPathWindows = procressedFilesPathName.replace("/", "\\" )
-    os.rename(sourceFilePathWindows, procressedFilesPathWindows)
-    time.sleep(2)
+    #sourceFilePathWindows = sourceFilePath.replace("/", "\\" )
+    #procressedFilesPathWindows = procressedFilesPathName.replace("/", "\\" )
+    os.rename(sourceFilePath, procressedFilesPathName)
+    time.sleep(8)
+
+endTime = int( time.time() )
+print("total time: " + str(endTime - startTime) )

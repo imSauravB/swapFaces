@@ -50,12 +50,12 @@ def set_fps(input_path, output_path, fps):
 
 def create_video(video_name, fps, output_dir):
     output_dir = path(output_dir)
-    os.system(f'ffmpeg -hwaccel cuda -framerate "{fps}" -i "{output_dir}{sep}%04d.png" -c:v libx264 -crf 7 -pix_fmt yuv420p -y "{output_dir}{sep}output.mp4"')
+    os.system(f'ffmpeg -framerate "{fps}" -i "{output_dir}{sep}%04d.png" -c:v libx264 -crf 7 -pix_fmt yuv420p -y "{output_dir}{sep}output.mp4"')
 
 
 def extract_frames(input_path, output_dir):
     input_path, output_dir = path(input_path), path(output_dir)
-    os.system(f'ffmpeg -hwaccel cuda -i "{input_path}" "{output_dir}{sep}%04d.png"')
+    os.system(f'ffmpeg -i "{input_path}" "{output_dir}{sep}%04d.png"')
 
 
 def add_audio(output_dir, target_path, video, keep_frames, output_file):

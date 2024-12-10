@@ -58,8 +58,8 @@ def checkDependencies():
     if '--gpu' in sys.argv:
         print("GPU option is selected. Not adding any execution provider here.")
     else:
-        print("Adding CPUExecutionProvider!")
-        pyCore.config.providers = ['CPUExecutionProvider']
+        print("Adding CoreMLExecutionProvider!")
+        pyCore.config.providers = ['CoreMLExecutionProvider']
 
 def startVideoProcessing():
     start_time = time.time()
@@ -72,7 +72,7 @@ def startVideoProcessing():
     else:
         print("@@@ Going to run on CPU only! @@@")
         global pool
-        numberOfCPUCores = psutil.cpu_count(logical=False) - 3
+        numberOfCPUCores = pyCore.config.GPU_THREADS
         pool = MP.Pool( numberOfCPUCores ) # Run the code in maxcpucore - 3
         frame_paths = args["frame_paths"]
         n = len(frame_paths)//(numberOfCPUCores)
